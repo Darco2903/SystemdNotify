@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+    id("xyz.jpenilla.run-paper") version "2.3.1"
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+// build.gradle.kts
+tasks.register("fullClean") {
+    doLast {
+        delete("build")
+        delete("out")
+        subprojects.forEach { subproject ->
+            delete("${subproject.projectDir}/build")
+            delete("${subproject.projectDir}/out")
+        }
+    }
+}

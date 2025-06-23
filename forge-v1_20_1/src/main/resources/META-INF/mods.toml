@@ -1,0 +1,10 @@
+modLoader = "javafml"
+loaderVersion = "[47,)" # Version de Forge requise, ici 47.x pour Minecraft 1.20.1
+license = "MIT"
+
+[[mods]]
+modId = "systemd_notify"
+version = "1.0.0"
+displayName = "Systemd Notify"
+description = '''Simple mod to notify systemd about the Minecraft server status.'''
+authors = "Darco2903"

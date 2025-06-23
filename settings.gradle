@@ -1,0 +1,18 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = 'MinecraftForge'
+            url = 'https://maven.minecraftforge.net/'
+        }
+    }
+}
+
+rootProject.name = 'SystemdNotify'
+include(
+        "common",
+        "forge-v1_20_1",
+        "spigot-v1_12_2",
+        "spigot-v1_15_1",
+        "spigot-v1_20_1"
+)
