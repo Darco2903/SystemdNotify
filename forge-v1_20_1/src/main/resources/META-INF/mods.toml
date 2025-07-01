@@ -8,3 +8,4 @@ version = "1.0.0"
 displayName = "Systemd Notify"
 description = '''Simple mod to notify systemd about the Minecraft server status.'''
 authors = "Darco2903"
+displayTest="IGNORE_SERVER_VERSION"
