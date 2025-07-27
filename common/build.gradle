@@ -2,9 +2,6 @@ plugins {
     id("java")
 }
 
-group = "fr.darco2903"
-version = "1.0.0"
-
 repositories {
     mavenCentral()
 }
@@ -13,7 +10,7 @@ dependencies {
     compileOnly "org.slf4j:slf4j-api:1.7.36"
 }
 
-def targetJavaVersion = 8
+def targetJavaVersion = 11
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
@@ -29,8 +26,4 @@ tasks.withType(JavaCompile).configureEach {
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
         options.release.set(targetJavaVersion)
     }
-}
-
-tasks.test {
-    useJUnitPlatform()
 }

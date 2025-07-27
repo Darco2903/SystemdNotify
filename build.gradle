@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 allprojects {
@@ -9,7 +8,6 @@ allprojects {
     }
 }
 
-// build.gradle.kts
 tasks.register("fullClean") {
     doLast {
         delete("build")

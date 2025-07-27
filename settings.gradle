@@ -9,10 +9,10 @@ pluginManagement {
 }
 
 rootProject.name = 'SystemdNotify'
-include(
-        "common",
-        "forge-v1_20_1",
-        "spigot-v1_12_2",
-        "spigot-v1_15_1",
-        "spigot-v1_20_1"
-)
+
+include "common"
+//include "forge-v1_12_2"
+include "forge-v1_20_1"
+//include "spigot-v1_12_2"
+//include "spigot-v1_15_1"
+include "spigot-v1_20_1"
