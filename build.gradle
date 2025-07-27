@@ -1,10 +1,124 @@
 plugins {
-    id 'java'
+    id "java"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 allprojects {
     repositories {
         mavenCentral()
+    }
+}
+
+subprojects {
+    if (project.name != "common") {
+
+        afterEvaluate {
+            jar {
+                enabled = false
+            }
+
+            shadowJar {
+                destinationDirectory.set(file("out"))
+                archiveVersion.set("v${project_version}")
+                archiveClassifier.set("")
+                archiveBaseName.set("${project_name}-${loader_type}-${minecraft_version}")
+                dependencies {
+                    include(project(":common"))
+                }
+            }
+
+            if (project.name.startsWith("forge")) {
+                java.toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+
+
+                tasks.named("processResources", ProcessResources).configure {
+                    var replaceProperties = [
+                            minecraft_version   : minecraft_version, minecraft_version_range: minecraft_version_range,
+                            forge_version       : forge_version, forge_version_range: forge_version_range,
+                            loader_version_range: loader_version_range,
+                            mod_id              : mod_id, mod_name: project_name, mod_license: mod_license, mod_version: project_version,
+                            mod_authors         : project_authors, mod_description: project_description,
+                    ]
+
+                    inputs.properties replaceProperties
+
+                    filesMatching(["META-INF/mods.toml", "pack.mcmeta"]) {
+                        expand replaceProperties
+                    }
+                }
+
+                tasks.named("jar", Jar).configure {
+                    enabled = false
+                    manifest {
+                        attributes([
+                                "Specification-Title"     : mod_id,
+                                "Specification-Vendor"    : project_authors,
+                                "Specification-Version"   : "1", // We are version 1 of ourselves
+                                "Implementation-Title"    : project.name,
+                                "Implementation-Version"  : project_version,
+                                "Implementation-Vendor"   : project_authors,
+                                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                        ])
+                    }
+
+                    // This is the preferred method to reobfuscate your jar file
+                    finalizedBy "reobfJar"
+                }
+
+                afterEvaluate {
+                    tasks.named("reobfJar") {
+                        enabled = false
+                    }
+                }
+
+                tasks.withType(JavaCompile).configureEach {
+                    options.encoding = "UTF-8" // Use the UTF-8 charset for Java compilation
+                }
+
+                reobf {
+                    shadowJar {}
+                }
+
+                build {
+                    dependsOn reobfShadowJar
+                }
+            } else if (project.name.startsWith("spigot")) {
+                def targetJavaVersion = java_version.toInteger()
+                java {
+                    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+                    sourceCompatibility = javaVersion
+                    targetCompatibility = javaVersion
+                    toolchain {
+                        languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
+                    }
+                }
+
+                tasks.withType(JavaCompile).configureEach {
+                    options.encoding = 'UTF-8'
+
+                    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+                        options.release.set(targetJavaVersion)
+                    }
+                }
+
+                processResources {
+                    def props = [
+                            name      : project_name,
+                            version   : project_version,
+                            apiVersion: minecraft_version_short,
+                    ]
+                    inputs.properties props
+                    filteringCharset 'UTF-8'
+                    filesMatching('plugin.yml') {
+                        expand props
+                    }
+                }
+
+                build {
+                    dependsOn shadowJar
+                }
+            }
+        }
     }
 }
 

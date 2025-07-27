@@ -10,7 +10,7 @@ dependencies {
     compileOnly "org.slf4j:slf4j-api:1.7.36"
 }
 
-def targetJavaVersion = 11
+def targetJavaVersion = 8
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
